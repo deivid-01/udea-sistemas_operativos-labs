@@ -139,33 +139,52 @@ int main(int argc,char*argv[])
                         }
         
 
-                       printf("%d|%s == %s : %d\n",i,ingredients[i],word,strncmp(ingredients [ i ] ,word,min));
                         if( strncmp(ingredients [ i ] ,word,min)== 0 )
-                        {
-                        //printf("%d|%s == %s : %d\n",totalIngredients,ingredients[i],word,strncmp(ingredients [ i ] ,word,min));
-                           
+                        {                         
                             orders [ i ] [ lineCount - 1 ] = 1; ingFound = true; break;
                             
                         }
                     }
                     wordCount ++;
                    
-
                 }
 
-                if(!ingFound) { orders [ i ] [ lineCount - 1 ] = 0; printf(" Debe ir un cero en %d,%d\n",i,lineCount - 1 ); }
-
-               
-                  
+                if(!ingFound) { orders [ i ] [ lineCount - 1 ] = 0; }                 
             }
         }
                             
         lineCount ++;
     }
-
-
-
+    
     fclose(fp); // Close file
+
+
+    #pragma region Send Matrix to output.txt
+
+    fp= fopen ( "output.txt", "w" );
+
+    fputs("Esta es la matriz de los platos:\n\n" , fp );
+
+
+    for (int i = 0; i < totalIngredients; i++)
+    {
+        char data [ totalOrders + 8]; // + # ??
+        
+        for (int j = 0; j < totalOrders; j++)
+        {       
+            data [ j ] = orders [ i ] [ j ]  + '0';
+        }
+     
+        fputs(strcat ( data , ( i == 0 )  ? "\n" : "" ) , fp );
+
+    }
+ 
+
+
+    #pragma endregion
+
+
+    
 
     return 0;
 }
