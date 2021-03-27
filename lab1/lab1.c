@@ -103,5 +103,11 @@ int main(int argc,char*argv[])
 
     SendToFile_Matrix(totalIngredients,totalOrders,orders);
 
+    //Calculate Solution Vector
+
+
+
+
+
     return 0;
 }
