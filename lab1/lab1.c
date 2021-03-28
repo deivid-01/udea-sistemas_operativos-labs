@@ -103,7 +103,16 @@ int main(int argc,char*argv[])
 
     SendToFile_Matrix(totalIngredients,totalOrders,orders);
 
-    //Calculate Solution Vector
+    
+
+    
+    //Create
+    int vectorSolucion[]={0,1,2,3,4,5,6,7,8};
+    int cost = 26;
+
+//Enviar al archivo
+
+
 
 
 

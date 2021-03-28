@@ -24,13 +24,7 @@ void swap ( int *a, int *b)
 
 int calculate_cost(int *quantities,int rows_i,int cols_i,int pizzas[][cols_i],int *temp_sol)
 {
-    
-  //  for (int i = 0; i < rows_i; i++)
-    //{
-   // printf("%d\n",pizzas[1][0]); 
-    //}
-    
-    
+        
     int cost = 0;
     int offset_t3 = 2*quantities[1];
     int offset_t4 = offset_t3 + 3*quantities[2];
@@ -78,7 +72,7 @@ int calculate_cost(int *quantities,int rows_i,int cols_i,int pizzas[][cols_i],in
 
 void solve(int *quantities,int rows_i, int cols_i,int pizzas[][cols_i],int *arr,int start,int end, int *sol, int *bestcost)
 {
- //   printf("holas");
+
     int currentcost  = 0;
     if (start==end)
     if(1)
@@ -133,19 +127,14 @@ int main()
     int sol[]={5,6,8,7,3,2,1,0,4};
     int permut[]= {1,0,8,3,4,6,5,7,2};
     int bestCost = 0;
-/*
-    for (int i = 0; i < totalmembers; i++)
-    {
-        sol[i] = i;
-        permut[i] = i;
-    }*/
+
+
     solve(quantities,quantities[4],quantities[0],pizzas,permut,0,totalmembers-1,sol,&bestCost);
     printf("Este es el vector de solucion: ");
     print_array(sol,totalmembers);
     printf("Cost: %d\n: ",bestCost);
 
-   //test(10,0,pizzas);
-    
+
 
     return 0;
 }
