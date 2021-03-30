@@ -111,7 +111,8 @@ int main(int argc,char*argv[])
     int cost = 26;
 
 //Enviar al archivo
-
+    SendToFile_VectorS(vectorSolucion, totalOrders);
+    SendToFile_Ingredients(cost);
 
 
 
