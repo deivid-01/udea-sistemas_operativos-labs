@@ -63,33 +63,26 @@ void SendToFile_Matrix(int totalIngredients,int totalOrders, int(*orders)[])
     fclose(fp);
 }
 
-void SendToFile_VectorS(int vectorSolucion[], int totalOrders){
+void Send_VectorS(int vectorSolucion[], int totalOrders){
     
-    FILE * fp = fopen( "output.txt", "r+");
+    FILE * fp = fopen( "output.txt", "a+");
 
-    fputs("Este es el vector de solución:\n\n ", fp);
-    
+    fputs("\n\n Este es el vector de solución: ", fp);
+    char data[totalOrders];
 
     for (int i = 0; i < totalOrders; i++)
         {       
-            int data;
-            vectorSolucion [ i ] = data;
-            
-        fputs(strcat ( data , fp );
+            data[i] =  vectorSolucion [ i ];
+            fprintf(fp, "%d", data[i]); 
         }
 
-  
-    
-    fclose(fp);
+     fclose(fp);
 }
 
-void SendToFile_Ingredients(int totalIngredients){
+void Send_Ingredients(int totalIngredients){
     
-    FILE * fp = fopen( "output.txt", "r+");
-
-    fputs("La cantidad de ingredientes diferentes totales es:\n\n ", fp);
-    fputs(strcat ( totalIngredients, "\n" ) , fp );
-
-    
+    FILE * fp = fopen( "output.txt", "a");
+    int total= totalIngredients;
+    fprintf(fp,"\n\nLa cantidad de ingredientes diferentes totales es: %d", total );
     fclose(fp);
 }

@@ -1,0 +1,8 @@
+Esta es la matriz de los platos:
+
+100100000
+101101111100100000110110000110110000010010000010010000011011111001001111001001111
+
+ Este es el vector de solución: 012345678
+
+La cantidad de ingredientes diferentes totales es: 26

@@ -19,6 +19,8 @@ int main(int argc,char*argv[])
     char ingredients[30][15];
     int totalIngredients, totalOrders, lineCount, wordCount;
     totalIngredients =  0 ;
+    int cost = 26;
+    int vectorSolucion[]={0,1,2,3,4,5,6,7,8};
 
 
     totalOrders= GetTotalOrders(fp);
@@ -102,17 +104,19 @@ int main(int argc,char*argv[])
     #pragma endregion
 
     SendToFile_Matrix(totalIngredients,totalOrders,orders);
-
+    Send_VectorS(vectorSolucion, totalOrders);
+    Send_Ingredients(cost);
+    
     
 
     
     //Create
-    int vectorSolucion[]={0,1,2,3,4,5,6,7,8};
-    int cost = 26;
+ 
+   
 
 //Enviar al archivo
-    SendToFile_VectorS(vectorSolucion, totalOrders);
-    SendToFile_Ingredients(cost);
+ 
+
 
 
 
