@@ -15,24 +15,48 @@ int main(int argc,char*argv[])
 
 
     char ingredients[30][15];
-    int totalOrders;
-    int totalIngredients =  0 ;
     int cost = 26;
-    int solutionVector[]={0,1,2,3,4,5,6,7,8};
+   
+    /*
+    quantities [0] => Total orders
+    quantities [1] => Num orders  of 2 dish
+    quantities [2] => Num orders  of 3 dish
+    quantities [3] => Num orders  of 4 dish
+    quantities [4] => Total ingredients
+    */
+    int quantities[5];
 
-
-    Set_TotalOrders(fp,&totalOrders);
-    Set_Ingredients(fp,30,15,ingredients,&totalIngredients);
-
-    int orders [ totalIngredients ] [ totalOrders ] ;
-
-    Set_ValuesMatrix(totalIngredients,totalOrders,orders,30,15,ingredients);
-
-    //Set_SolutionVector()
+    Set_Quantities(fp,quantities);
     
-    SendToFile_Matrix(totalIngredients,totalOrders,orders);
+    int totalmembers = 2*quantities[1]+3*quantities[2]+4*quantities[3];
+    int solutionVector[ quantities[0] ] ;
+    int permutation[ quantities[0] ] ;
 
-    Send_VectorS(solutionVector, totalOrders);
+    InitializeArray(quantities[0],solutionVector);
+    InitializeArray(quantities[0],permutation);
+
+    int totalDiffIngred = 0;
+    Set_Ingredients(fp,30,15,ingredients,&quantities[4]);
+
+
+    int orders [ quantities[4] ] [ quantities[0] ] ;
+
+    Set_ValuesMatrix(quantities[4], quantities[0] ,orders,30,15,ingredients);
+
+
+    Find_SolutionVector(quantities,
+                        quantities[4],
+                        quantities[0],
+                        orders,
+                        permutation,
+                        0,
+                        totalmembers-1,
+                        solutionVector,
+                        &totalDiffIngred);
+  
+  
+    SendToFile_Matrix(quantities[4], quantities[0] ,orders);
+    Send_VectorS(solutionVector,  quantities[0] );
     Send_Ingredients(cost);
 
     return 0;
