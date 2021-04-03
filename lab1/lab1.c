@@ -58,6 +58,7 @@ int main(int argc,char*argv[])
     SendToFile_Matrix(quantities[4], quantities[0] ,orders);
     Send_VectorS(solutionVector,  quantities[0] );
     Send_Ingredients(cost);
+    Send_Orders(quantities,solutionVector,quantities[0], quantities[4], orders, ingredients);
 
     return 0;
 }

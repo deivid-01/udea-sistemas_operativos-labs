@@ -177,6 +177,8 @@ void SendToFile_Matrix(int totalIngredients,int totalOrders,int orders[][totalOr
     fclose(fp);
 }
 
+//Sending the solution vector to the file 
+
 void Send_VectorS(int vectorSolucion[], int totalOrders){
     
     FILE * fp = fopen( "output.txt", "a+");
@@ -193,12 +195,64 @@ void Send_VectorS(int vectorSolucion[], int totalOrders){
      fclose(fp);
 }
 
+//Sending the total ingredients to the file 
+
 void Send_Ingredients(int totalIngredients){
     
     FILE * fp = fopen( "output.txt", "a");
     int total= totalIngredients;
     fprintf(fp,"\n\nLa cantidad de ingredientes diferentes totales es: %d", total );
     fclose(fp);
+}
+
+
+
+void Send_Orders(int quantities[], int solutionVector[], int totalOrders, int totalIngredients, int orders[][totalOrders], char ingredients[]){
+    FILE * fp= fopen("output.txt", "a");
+    int offset_2, offset_3, offset_4, temp, ord_0, ord_1, ord_2, temp1, temp2;
+    
+    offset_2= quantities[1];
+    offset_3= quantities[2];
+    offset_4= quantities[3];
+
+    fputs("\nEl pedido 0 contiene:", fp);
+    fputs("\nEl pedido 1 contiene:", fp);
+    fputs("\nEl pedido 2 contiene:", fp);
+
+   
+   for(int i=0; i<= totalIngredients; i++){
+         ord_0 = solutionVector[offset_2*2];
+            for(int u=0; u<= ord_0; u++){
+                temp=  solutionVector[u];
+                if(orders[i][temp] == 1){
+                   if (fgets(ingredients[i], 60, fp)!= NULL){
+                        fprintf (fp,"%d", ingredients[i]);
+                   }
+                } temp ++;
+            }
+            ord_1= solutionVector[offset_3*3];
+            for(int w=ord_0+1; w<= ord_1; w++){
+                temp1= solutionVector[w];
+                if(orders[i][temp1]==1){
+                    if(fgets(ingredients[i], 60, fp)!= NULL){
+                        fprintf(fp, " %d", ingredients[i]);
+                    } temp1 ++;
+                }
+            }
+            ord_2=  solutionVector[offset_4*4];
+            for(int y=ord_2+1; y<= ord_2; y++){
+                temp2= solutionVector[y];
+                if(orders[i][temp2]==1){
+                    if(fgets(ingredients[i], 60, fp)!= NULL){
+                         fprintf(fp, " %d", ingredients[i]);
+                    } temp2++;
+                }
+            }
+
+        
+
+    }
+   
 }
 
 int Swap ( int *a, int *b)
