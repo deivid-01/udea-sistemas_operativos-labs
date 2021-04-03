@@ -14,6 +14,8 @@ void SendToFile_Matrix(int,int, int (*)[]);
 
 void Send_Ingredients(int);
 
+void Send_Orders(int [], int [], int , int , int (*)[], char (*)[]);
+
 void Send_VectorS(int [], int);
 void InitializeArray(int ,int []);
 
