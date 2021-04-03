@@ -14,9 +14,7 @@ int main(int argc,char*argv[])
     if( ! Validate_File(fp))  return EXIT_FAILURE; 
 
 
-    char ingredients[30][15];
-    int cost = 26;
-   
+    char ingredients[30][15];   
     /*
     quantities [0] => Total orders
     quantities [1] => Num orders  of 2 dish
@@ -57,7 +55,7 @@ int main(int argc,char*argv[])
   
     SendToFile_Matrix(quantities[4], quantities[0] ,orders);
     Send_VectorS(solutionVector,  quantities[0] );
-    Send_Ingredients(cost);
+    Send_Ingredients(totalDiffIngred);
 
     return 0;
 }
