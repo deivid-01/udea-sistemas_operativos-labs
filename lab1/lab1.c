@@ -57,7 +57,7 @@ int main(int argc,char*argv[])
     Send_VectorS(solutionVector,  quantities[0] );
 
     Send_Ingredients(totalDiffIngred);
-    Send_Orders(quantities,solutionVector,quantities[0], quantities[4], orders, ingredients);
+    Send_Orders(quantities,solutionVector,quantities[4], quantities[0], orders,30,15, ingredients);
 
 
     return 0;

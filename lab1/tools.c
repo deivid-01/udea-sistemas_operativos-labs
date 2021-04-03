@@ -207,52 +207,80 @@ void Send_Ingredients(int totalIngredients){
 
 
 
-void Send_Orders(int quantities[], int solutionVector[], int totalOrders, int totalIngredients, int orders[][totalOrders], char ingredients[]){
+void Send_Orders(int quantities[], int solutionVector[], int rows_ord, int cols_ord,int orders[][cols_ord], int rows_ing, int cols_ing,char ingredients[][cols_ing]){
+   
     FILE * fp= fopen("output.txt", "a");
-    int offset_2, offset_3, offset_4, temp, ord_0, ord_1, ord_2, temp1, temp2;
     
-    offset_2= quantities[1];
-    offset_3= quantities[2];
-    offset_4= quantities[3];
+    int offset_2 = 0;
+    int offset_3 = 0;
+    int offset_4 = 0;
 
-    fputs("\nEl pedido 0 contiene:", fp);
-    fputs("\nEl pedido 1 contiene:", fp);
-    fputs("\nEl pedido 2 contiene:", fp);
+    for (int i = 0; i <=2; i++)
+    {
+        char num[1];
+        fputs("\n\nEl pedido ",fp);
+        fputs(itoa(i, num, 10),fp);
+        fputs(" contiene: ",fp);
+      
+        int idxs[quantities[i+1]*(i+2)]; 
+        int count = 0; 
+        //Set indexes
+        for (int j = 0; j < quantities[i+1]; j++)
+        {
+            for (int q = 0; q < (i+2); q++)
+            {
+                int idx;
 
-   
-   for(int i=0; i<= totalIngredients; i++){
-         ord_0 = solutionVector[offset_2*2];
-            for(int u=0; u<= ord_0; u++){
-                temp=  solutionVector[u];
-                if(orders[i][temp] == 1){
-                   if (fgets(ingredients[i], 60, fp)!= NULL){
-                        fprintf (fp,"%d", ingredients[i]);
-                   }
-                } temp ++;
+                if ( i == 0)
+                {
+                    offset_2 = q +j*2;
+                    idx = solutionVector[offset_2];         
+                }
+
+                else if ( i == 1)
+                {
+                    offset_3 = offset_2 +  q + j*3 + 1 ; 
+                    idx = solutionVector[offset_3];
+                }
+
+                else if ( i == 2)
+                {
+                     offset_4 = offset_3 +  q + j*4 + 1;
+                     idx = solutionVector[offset_4];
+                   
+                }
+
+                idxs[count] = idx;
+                count = count + 1;
+
             }
-            ord_1= solutionVector[offset_3*3];
-            for(int w=ord_0+1; w<= ord_1; w++){
-                temp1= solutionVector[w];
-                if(orders[i][temp1]==1){
-                    if(fgets(ingredients[i], 60, fp)!= NULL){
-                        fprintf(fp, " %d", ingredients[i]);
-                    } temp1 ++;
+            
+        }
+        //Find ingredients with index
+
+        int n = sizeof(idxs)/sizeof(idxs[0]);      
+
+        for (int t = 0; t < rows_ord; t++)
+        {
+            bool ingredientExist = false;
+          
+            for (int q = 0; q < n; q++)
+            {
+                if( orders [ t ][idxs[q]])
+                {
+                    ingredientExist = true;  break;        
                 }
             }
-            ord_2=  solutionVector[offset_4*4];
-            for(int y=ord_2+1; y<= ord_2; y++){
-                temp2= solutionVector[y];
-                if(orders[i][temp2]==1){
-                    if(fgets(ingredients[i], 60, fp)!= NULL){
-                         fprintf(fp, " %d", ingredients[i]);
-                    } temp2++;
-                }
-            }
-
-        
-
+        //Send to file
+            if( ingredientExist)
+            {
+                fputs(ingredients[t],fp);
+                fputs(" ,",fp);
+            }                 
+        }
+        fputs("\n",fp);
     }
-   
+
 }
 
 int Swap ( int *a, int *b)
