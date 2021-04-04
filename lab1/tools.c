@@ -350,25 +350,35 @@ bool IsANumber(char number[])
     {
         int num = (int)number[i];
      
-
-        if( i == ( n-1))
-        {
-            if ( num == 10)
-            {
-                continue;
-            }
-        }
-
-        if (num <= 47 || num >= 58)
-        {
-            return false;
-        }
-
-        
+        if( i == ( n-1))    {if ( num == 10){ continue;}}
+    
+        if (num <= 47 || num >= 58){ return false;}       
     }
     return true;
 }
 
+bool ValidCharacters(char word[])
+{
+        int n =  strlen(word);
+    
+    for (int i = 0; i <n; i++)
+    {
+        int num = (int)word[i];
+     
+        if( i == ( n-1))  {  if ( num == 10){ continue;}}
+
+        if(num ==95){ continue;}
+        
+        if (num <= 96 || num >= 123){ return false;}
+      
+    }
+    return true;
+}
+
+void ErrorMessage()
+{
+    printf("ERROR FILE: File format is not allowed\n");
+}
 
 
 bool Validate_Args(int argc)
@@ -395,36 +405,52 @@ bool Validate_File(FILE *fp, char fileName[])
     }
 
     char line[1024];
-    int wordCount = 0;
-    char *word;
-    fgets(line, 1024, fp);
-    char *rest = line;
+    int lineCount = 0;
 
-    while (word = strtok_r(rest, " ", &rest)) // Reading each word of line
+
+    while (fgets(line, 1024, fp)) //Reading each line of file
     {
-        if ( !IsANumber(word) || wordCount > 3 ){ break;}
+ 
+        char *word;
+        char *rest = line; // Points to the direction the line
+        int wordCount = 0;   
 
-        if (wordCount == 0)
+        if ( lineCount == 0)
         {
-            firstNumber = atoi(word);
+            while (word = strtok_r(rest, " ", &rest)) // Reading each word of line
+            {
+                if ( !IsANumber(word) || wordCount > 3 ){ break;}
+                
+            
+                if (wordCount == 0) {  firstNumber = atoi(word); }
+              
+                if ( wordCount>0) { sumFirstLine += (wordCount+1)*atoi(word);}
+                
+                wordCount++;      
+            }
+            if (wordCount != sizeFirstLine | firstNumber != sumFirstLine)         
+             {   ErrorMessage(); return false;}    
+                          
         }
-        if ( wordCount>0)
+        else
         {
-            sumFirstLine = sumFirstLine + (wordCount+1)*atoi(word);
+            while (word = strtok_r(rest, " ", &rest)) // Reading each word of line
+            {
+                if (wordCount == 0)
+                { if (!IsANumber(word) ) {  ErrorMessage(); return false;}    }
+                else
+                {
+                    if ( strlen(word)>20 || !ValidCharacters(word)){ ErrorMessage(); return false;}
+                } 
+
+                wordCount++;      
+            }          
         }
-        
-        wordCount++;
+        lineCount++;
     }
+   
+   if((lineCount-1)!=firstNumber) { ErrorMessage();return false;}
 
-    if (wordCount != sizeFirstLine | firstNumber != sumFirstLine)
-    {
-        printf("ERROR FILE: File format is not allowed\n");
-        return false;
-    }
-
-    //Num of file lines equal to first word of file
-    //Cada linea inicia con un numero
-    //Cada ingrediente puede tener hasta 20 caracteres alfanum´ericos, todos en min´uscula y sin caracteres especiales (es decir, sin tildes ni e˜nes, etc...).
-    //0.Solo se permite el caracter para separar las palabras de ingredientes que sean m´as de una palabra.
     return true;
 }
+
