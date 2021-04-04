@@ -2,11 +2,10 @@
 
 #define TOOLS_h
 
- int Set_TotalOrders(FILE *, int *);
 void Set_Quantities(FILE *, int[]);
 void Set_Ingredients(FILE *,int, int, char(*)[],int *);
 
-void Set_ValuesMatrix(int, int ,int (*)[],int, int, char(*)[]);
+void Set_ValuesMatrix(char[],int, int ,int (*)[],int, int, char(*)[]);
 
 void Find_SolutionVector(int *,int ,int ,int (*)[],int *,int,int,int *,int*);
 
@@ -21,4 +20,4 @@ void InitializeArray(int ,int []);
 
 
 bool Validate_Args(int);
-bool Validate_File(FILE *);
+bool Validate_File(FILE *,char []);

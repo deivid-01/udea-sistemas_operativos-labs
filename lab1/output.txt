@@ -1,0 +1,14 @@
+Esta es la matriz de los platos:
+
+
+Este es el vector de solución: 0	1	2	3	4	5	6	7	8	
+
+La cantidad de ingredientes diferentes totales es: 0
+
+El pedido 0 contiene: 
+
+
+El pedido 1 contiene: 
+
+
+El pedido 2 contiene: 
