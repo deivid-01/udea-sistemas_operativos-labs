@@ -68,7 +68,7 @@ void Set_Ingredients(FILE *fp, int rows, int cols, char ingredients[][cols], int
     fclose(fp);
 }
 
-void Set_ValuesMatrix(char fileName[], int rows_ord, int cols_ord, int orders[][cols_ord], int row_ing, int col_ing, char ingredients[][col_ing])
+void Set_Matrix(char fileName[], int rows_ord, int cols_ord, int orders[][cols_ord], int row_ing, int col_ing, char ingredients[][col_ing])
 {
     FILE *fp = fopen(fileName, "r");
     char line[1024];
@@ -117,7 +117,7 @@ void Set_ValuesMatrix(char fileName[], int rows_ord, int cols_ord, int orders[][
     fclose(fp); // Close file
 }
 
-void SendToFile_Matrix(int totalIngredients, int totalOrders, int orders[][totalOrders])
+void Send_Matrix(int totalIngredients, int totalOrders, int orders[][totalOrders])
 {
     FILE *fp = fopen("output.txt", "w");
 
@@ -248,6 +248,14 @@ void Send_Orders(int quantities[], int solutionVector[], int rows_ord, int cols_
     fclose(fp);
 }
 
+void SendToFile(int totalDiffIngred,int quantities[],int solutionVector[],int rows_ord, int cols_ord, int orders[][cols_ord],int rows_ing,int cols_ing, char ingredients[][cols_ing])
+{
+    Send_Matrix(quantities[4], quantities[0] ,orders);
+    Send_VectorS(solutionVector,  quantities[0] );
+    Send_Ingredients(totalDiffIngred);
+    Send_Orders(quantities,solutionVector,quantities[4], quantities[0], orders,30,20, ingredients);
+}
+
 int Swap(int *a, int *b)
 {
     int temp;
@@ -310,7 +318,7 @@ int Calculate_Cost(int *quantities, int rows, int cols, int orders[][cols], int 
     return cost;
 }
 
-void Find_SolutionVector(int *quantities, int rows, int cols, int orders[][cols], int *arr, int start, int end, int *sol, int *bestCost)
+void Set_SolutionVector(int *quantities, int rows, int cols, int orders[][cols], int *arr, int start, int end, int *sol, int *bestCost)
 {
 
     int currentcost = 0;
@@ -334,123 +342,10 @@ void Find_SolutionVector(int *quantities, int rows, int cols, int orders[][cols]
     for (i = start; i <= end; i++)
     {
         Swap((arr + 1), (arr + start));
-        Find_SolutionVector(quantities, rows, cols, orders, arr, start + 1, end, sol, bestCost);
+        Set_SolutionVector(quantities, rows, cols, orders, arr, start + 1, end, sol, bestCost);
         Swap((arr + i), (arr + start));
     }
 }
 
 //------------------------------------------------------Validation---------------------------------------//
-
-bool IsANumber(char number[])
-{
-
-    int n =  strlen(number);
-    
-    for (int i = 0; i <n; i++)
-    {
-        int num = (int)number[i];
-     
-        if( i == ( n-1))    {if ( num == 10){ continue;}}
-    
-        if (num <= 47 || num >= 58){ return false;}       
-    }
-    return true;
-}
-
-bool ValidCharacters(char word[])
-{
-        int n =  strlen(word);
-    
-    for (int i = 0; i <n; i++)
-    {
-        int num = (int)word[i];
-     
-        if( i == ( n-1))  {  if ( num == 10){ continue;}}
-
-        if(num ==95){ continue;}
-        
-        if (num <= 96 || num >= 123){ return false;}
-      
-    }
-    return true;
-}
-
-void ErrorMessage()
-{
-    printf("ERROR FILE: File format is not allowed\n");
-}
-
-
-bool Validate_Args(int argc)
-{
-    if (argc < 2)
-    {
-        printf("You must specify a filepath");
-        return false;
-    }
-
-    return true;
-}
-
-bool Validate_File(FILE *fp, char fileName[])
-{
-    int sizeFirstLine = 4;
-    int sumFirstLine = 0;
-    int firstNumber;
-
-    if (!fp)
-    {
-        printf("ERROR FILE:  opening file %s\n", fileName);
-        return false;
-    }
-
-    char line[1024];
-    int lineCount = 0;
-
-
-    while (fgets(line, 1024, fp)) //Reading each line of file
-    {
- 
-        char *word;
-        char *rest = line; // Points to the direction the line
-        int wordCount = 0;   
-
-        if ( lineCount == 0)
-        {
-            while (word = strtok_r(rest, " ", &rest)) // Reading each word of line
-            {
-                if ( !IsANumber(word) || wordCount > 3 ){ break;}
-                
-            
-                if (wordCount == 0) {  firstNumber = atoi(word); }
-              
-                if ( wordCount>0) { sumFirstLine += (wordCount+1)*atoi(word);}
-                
-                wordCount++;      
-            }
-            if (wordCount != sizeFirstLine | firstNumber != sumFirstLine)         
-             {   ErrorMessage(); return false;}    
-                          
-        }
-        else
-        {
-            while (word = strtok_r(rest, " ", &rest)) // Reading each word of line
-            {
-                if (wordCount == 0)
-                { if (!IsANumber(word) ) {  ErrorMessage(); return false;}    }
-                else
-                {
-                    if ( strlen(word)>20 || !ValidCharacters(word)){ ErrorMessage(); return false;}
-                } 
-
-                wordCount++;      
-            }          
-        }
-        lineCount++;
-    }
-   
-   if((lineCount-1)!=firstNumber) { ErrorMessage();return false;}
-
-    return true;
-}
 
