@@ -1,6 +1,6 @@
 # Lab 1
 
-- In order tu run **lab1** , you must enter to lab1 folder and  execute the following commands:
+- In order tu run **lab1** , execute the following commands:
 ```c++
 gcc lab1.c tools.c validations.c -o lab1
 ./lab1 filename
