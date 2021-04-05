@@ -7,4 +7,4 @@ gcc lab1.c tools.c validations.c -o lab1
 ```
 Replace *filename* with the name of the input file.
 
-- In the **Docs** folder you will find the laboratory report.
+- In **Docs** folder you will find the laboratory report.
