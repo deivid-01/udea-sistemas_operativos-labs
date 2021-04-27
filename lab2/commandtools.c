@@ -24,12 +24,17 @@ char *system_path_commands[] = {
 	//"/usr/bin/",
 	NULL
 };
-
+/*
+*@brief Execute  CD - built_in command
+*
+*	@param	char(*)[] args  	 :		command arguments
+*	@param	int numargs  :		numbers of command arguments 
+*/
 void executeCD(int rows, int cols, char args[][cols],int numArgs)
 {
 	 if(numArgs==1)
 	 {
-		if(chdir(args[1])!=0)
+		if(chdir(args[1])!=0) // If CD is not executed correctly..
 		{
 			write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));		
 		}
@@ -41,7 +46,14 @@ void executeCD(int rows, int cols, char args[][cols],int numArgs)
 }
 
 
-
+/*
+*@brief Execute PATH - built_in command
+*
+*	@param	int rows  	 :		rows number  of args list
+*	@param	int cols  :		cols  number  of args list
+*	@param	char(*)[] args  :		command arguments
+*	@param	int numargs  :		numbers of command arguments 
+*/
 void executePATH(int rows, int cols, char args[][cols],int numArgs)
 {
 	printf("PATH command is under development...\n");
@@ -153,7 +165,7 @@ builtin_command str_to_command( char *strcommand)
 {
 	for (int i = 0; i < 3; i++)
 	{
-		if ( ! strcmp(commands[i].string_value, strcommand))
+		if ( ! strcmp(commands[i].string_value, strcommand)) //If built in command exists...
 		{
 			return commands[i].command;
 		}
@@ -171,14 +183,14 @@ void deleteNewLine(char str[])
 	{
 		p++;
 	}
-	*p = '\0';
+	*p = '\0'; //Reset last value
 }
 
-void setArguments(int rows,int cols, char args[][cols],char str[],int *numArgs)
+void saveArguments(int rows,int cols, char args[][cols],char str[],int *numArgs)
 {
 		char *token;
 		char *rest = str;
-		while ( token = strtok_r(rest," ",&rest) )
+		while ( token = strtok_r(rest," ",&rest) ) //Applies split()
 		{	
 			strcpy(args[*numArgs],token);
 			*numArgs = *numArgs +1;

@@ -21,7 +21,7 @@ int main (int argc, char *argv[])
 		fgets(str, MAX_SIZE, stdin); //Gets input
 
 		deleteNewLine(str); // Delete new line symbol '\n'
-		setArguments(30,15,args,str,&numArgs); //Get arguments 
+		saveArguments(30,15,args,str,&numArgs); //Get arguments 
 
 		builtin_command command = str_to_command( args[0] );//Gets builtin command
 

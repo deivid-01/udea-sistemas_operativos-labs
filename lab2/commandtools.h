@@ -12,11 +12,51 @@ const static struct{
 	{path_,"path"},
 	{exit_,"exit"}
 };
-
+/**
+*@brief Execute Unix Commands.
+*
+*	 Like  ls,mkdir,cp, nano, etc.. 	
+*
+*	@param	int rows  	 :		rows number  of args list
+*	@param	int cols  :		cols  number  of args list
+*	@param	char(*)[] args  :		command arguments
+*	@param	int numargs  :		numbers of command arguments 
+*/
 void executeUnixCommand(int, int , char (*)[],int );
+/**
+*@brief Execute Builtin  Commands.
+*
+*	 Like  cd,path and exit. 	
+*
+*	@param	builtin_command builtin_command  	 :		type of builtin_command
+*	@param	int rows  :			rows  number  of args list
+*	@param	int cols  :			cols  number  of args list
+*	@param	char(*)[] args  :	command arguments
+*	@param	int numargs  :		numbers of command arguments 
+*/
 void executeBuiltInCommand(builtin_command ,int ,int ,char  (*)[],int);
-void setArguments(int rows,int cols, char args[][cols],char str[],int *numArgs);
+/**
+*@brief Save input line arguments .
+*	
+*
+*	@param	builtin_command builtin_command  	 :		type of builtin_command
+*	@param	int rows  :			rows  number  of args list
+*	@param	int cols  :			cols  number  of args list
+*	@param	char(*)[] args  :	command arguments
+*	@param	int numargs  :		numbers of command arguments 
+*/
+void saveArguments(int ,int , char (*)[],char [],int *);
+/**
+*@brief Searchs for  string equivalent of builtin command .
+*	
+*	@param	builtin_command builtin_command  	 :		type of builtin_command
+*/
 builtin_command str_to_command( char *);
+/**
+*@brief Deletes new line symbol.
+*	
+*	@param	char [] list    :	string
+*/
 void deleteNewLine(char []);
 
 #endif
