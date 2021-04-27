@@ -21,7 +21,7 @@ char ERROR_MESSAGE[128] = "An error has occurred\n";
 
 char *system_path_commands[] = {
 	"/bin/",
-	//"/usr/bin/",
+	"/usr/bin/",
 	NULL
 };
 /*
