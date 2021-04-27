@@ -5,5 +5,3 @@
 gcc lab2.c commandtools.c .c -o wish
 ./wish
 ```
-
-- In **Docs** folder you will find the laboratory report.
