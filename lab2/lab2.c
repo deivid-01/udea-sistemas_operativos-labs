@@ -8,31 +8,22 @@
 
 
 const int MAX_SIZE = 100;
+const char ERROR_MESSAGE[128] = "An error has occurred\n";
 
 int main (int argc, char *argv[])
 {
-	char str[MAX_SIZE];
-	char args[30][15];
 
-	do 
+	if( argc-1 == 0) //Interactive mode
 	{
-		int numArgs = 0;
-		printf ( "wish> ");
-		fgets(str, MAX_SIZE, stdin); //Gets input
-
-		deleteNewLine(str); // Delete new line symbol '\n'
-		saveArguments(30,15,args,str,&numArgs); //Get arguments 
-
-		builtin_command command = str_to_command( args[0] );//Gets builtin command
-
-		if ( command != not_command) // BUIT-IN COMMANDS
-		{
-			executeBuiltInCommand(command,30,15,args,numArgs);
-		}
-		else //UNIX COMMANDS
-		{
-			executeUnixCommand(30,15,args,numArgs);	
-		}
+		interactiveMode();	
 	}
-	while(1);
+	else if ( (argc-1) == 1 ) // Batch mode
+	{
+		batchMode(argv);
+	}
+	else //Error
+	{
+		write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));	
+	}
+	
 }

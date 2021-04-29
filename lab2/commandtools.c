@@ -14,7 +14,6 @@ int pathChanged=0;
 int pathEmpty=0;
 char *path;
 
-char ERROR_MESSAGE[128] = "An error has occurred\n";
 
 
  
@@ -24,12 +23,46 @@ char *system_path_commands[] = {
 	"/usr/bin/",
 	NULL
 };
+
+
+void batchMode(char *fileName[]){
+	printf("Executing batch mode...\n");
+	printf("Openning file %s\n",*(fileName+1));
+}
+void interactiveMode(){
+
+	char str[MAX_SIZE];
+	char args[30][15];
+
+	do 
+			{
+				int numArgs = 0;
+				printf ( "wish> ");
+				fgets(str, MAX_SIZE, stdin); //Gets input
+
+				deleteNewLine(str); // Delete new line symbol '\n'
+				saveArguments(30,15,args,str,&numArgs); //Get arguments 
+
+				builtin_command command = str_to_command( args[0] );//Gets builtin command
+
+				if ( command != not_command) // BUIT-IN COMMANDS
+				{
+					executeBuiltInCommand(command,30,15,args,numArgs);
+				}
+				else //UNIX COMMANDS
+				{
+					executeUnixCommand(30,15,args,numArgs);	
+				}
+			}
+		while(1);
+}
 /*
 *@brief Execute  CD - built_in command
 *
 *	@param	char(*)[] args  	 :		command arguments
 *	@param	int numargs  :		numbers of command arguments 
 */
+
 void executeCD(int rows, int cols, char args[][cols],int numArgs)
 {
 	 if(numArgs==1)
