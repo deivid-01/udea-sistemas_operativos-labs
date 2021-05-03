@@ -28,6 +28,54 @@ char *system_path_commands[] = {
 void batchMode(char *fileName[]){
 	printf("Executing batch mode...\n");
 	printf("Openning file %s\n",*(fileName+1));
+
+
+	char str[MAX_SIZE];
+	char args[30][15];
+	char line[1024];
+
+	
+	FILE * fp = fopen(*(fileName+1), "r");
+	
+		if(fp == NULL){
+			printf("Error opening file\n");
+		}
+
+	do
+			{
+				
+				int numArgs=0;
+				printf( "wish> ");
+
+
+				fgets(line, 1024, fp);
+				
+
+			
+				
+				
+						deleteNewLine(line);
+						saveArguments(30,15,args,line,&numArgs);
+					
+						
+						builtin_command command = str_to_command( args[0] );
+						
+							if ( command != not_command) // BUIT-IN COMMANDS
+							{
+								executeBuiltInCommand(command,30,15,args,numArgs);
+							}
+							else //UNIX COMMANDS
+							{
+								executeUnixCommand(30,15,args,numArgs);	
+							}
+						
+			
+					
+				
+			} while(1);
+	fclose(fp);
+
+
 }
 void interactiveMode(){
 
