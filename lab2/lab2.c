@@ -1,17 +1,11 @@
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include "commandtools.h"
-
-
-const int MAX_SIZE = 100;
-const char ERROR_MESSAGE[128] = "An error has occurred\n";
+#include <string.h>
 
 int main (int argc, char *argv[])
 {
+	setDefaultPath();
 
 	if( argc-1 == 0) //Interactive mode
 	{

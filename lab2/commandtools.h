@@ -3,7 +3,7 @@
 
 extern  const int MAX_SIZE;
 extern const char ERROR_MESSAGE[128];
-
+extern char *system_path_commands[50]; 
 typedef enum { cd_, path_,exit_, not_command} builtin_command;
 
 const static struct{
@@ -14,7 +14,7 @@ const static struct{
 	{path_,"path"},
 	{exit_,"exit"}
 };
-
+void setDefaultPath();
 void interactiveMode();
 void batchMode(char *[]);
 

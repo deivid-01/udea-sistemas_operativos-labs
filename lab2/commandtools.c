@@ -7,90 +7,37 @@
 #include "commandtools.h"
 
 
+const int MAX_SIZE = 100;
+const char ERROR_MESSAGE[128] = "An error has occurred\n";
+char *system_path_commands[50]; 
 
-char multiPath[512][512];
-int numberMultiPath=0;
-int pathChanged=0;
-int pathEmpty=0;
-char *path;
-
-
-
- 
-
-char *system_path_commands[] = {
-	"/bin/",
-	"/usr/bin/",
-	NULL
-};
-
-
-void batchMode(char *fileName[]){
-
-	char str[MAX_SIZE];
+void setDefaultPath()
+{
+	*system_path_commands = "/bin/";
+	*(system_path_commands +1 ) = "/usr/bin/";
+	*(system_path_commands +2 ) = NULL;
+}
+void executeCommand(char line[])
+{
 	char args[30][15];
-	char line[1024];
-
+	int numArgs = 0;
 	
-	FILE * fp = fopen(*(fileName+1), "r");
-	
-		if(fp == NULL){
-			printf("Error opening file\n");
-		}
+	deleteLastSymbol(line); // Delete new line symbol '\n'
+	saveArguments(30,15,args,line,&numArgs); //Get arguments 
 
-	while(fgets(line, 1024, fp))
+	builtin_command command = str_to_command( args[0] );//Gets builtin command
+
+	if ( command != not_command) // BUIT-IN COMMANDS
 	{
-		
-		int numArgs=0;
-		
-		deleteLastSymbol(line);
-		saveArguments(30,15,args,line,&numArgs);
-		
-		builtin_command command = str_to_command( args[0] );
-		
-			if ( command != not_command) // BUIT-IN COMMANDS
-			{
-				executeBuiltInCommand(command,30,15,args,numArgs);
-			}
-			else //UNIX COMMANDS
-			{
-				executeUnixCommand(30,15,args,numArgs);	
-			}
-		
-	} 
-	fclose(fp);
-
-	
-
+		executeBuiltInCommand(command,30,15,args,numArgs);
+	}
+	else //UNIX COMMANDS
+	{
+		executeUnixCommand(30,15,args,numArgs);	
+	}
 }
-void interactiveMode(){
-
-	char str[MAX_SIZE];
-	char args[30][15];
 
 
-	do 
-			{
-				int numArgs = 0;
-				printf ( "wish> ");
-				fgets(str, MAX_SIZE, stdin); //Gets input
-
-				deleteLastSymbol(str); // Delete new line symbol '\n'
-				saveArguments(30,15,args,str,&numArgs); //Get arguments 
-
-				builtin_command command = str_to_command( args[0] );//Gets builtin command
-
-				if ( command != not_command) // BUIT-IN COMMANDS
-				{
-					executeBuiltInCommand(command,30,15,args,numArgs);
-				}
-				else //UNIX COMMANDS
-				{
-					executeUnixCommand(30,15,args,numArgs);	
-				}
-			}
-		while(1);
-}
 /*
 *@brief Execute  CD - built_in command
 *
@@ -124,41 +71,22 @@ void executeCD(int rows, int cols, char args[][cols],int numArgs)
 */
 void executePATH(int rows, int cols, char args[][cols],int numArgs)
 {
-	printf("PATH command is under development...\n");
-	//Num args != 1 
-	/*
-	printf("path  executed\n");
-	pathChanged = 1;
-	if ( numArgs == 0 )
+	if ( numArgs== 0 )
 	{
-		pathEmpty=1;
-	}
-	else if ( numArgs == 1)
-	{	
-		pathEmpty=0;
-		path=strdup(args[1]);
-
-		if ( path[strlen(path)-1]!='/')
-		{
-				strcat(path,"/");
-		}  	
+		*system_path_commands = NULL;	//Set first to null
 	}
 	else
-	{ 
-		pathEmpty=0;
-		for(int i=1;i<=numArgs;i++)
+	{
+		int i = 0;
+
+		while (i<numArgs) // Set new path
 		{
-			char *temp=strdup(args[i]);
-
-			if(temp[strlen(temp)-1]!='/')
-					strcat(temp,"/");
-			
-			strcpy(multiPath[i-1],temp);
-			numberMultiPath++;
+			*(system_path_commands+i) = args[i+1];
+			i++;
 		}
-
+		*(system_path_commands+i) = NULL;
+		
 	}
-	*/
                                 
 }
 
@@ -197,6 +125,7 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
 		while (*(system_path_commands+i)!= NULL && returnedValue == -1) // Search for all PATHS
 		{
 			strcpy(pathToFile,*(system_path_commands+i)); //Set path route to pathToFile
+			printf("%s\n",pathToFile);
 			strcat(pathToFile,args[0]); //Concatenate PATH + command
 			returnedValue= access(pathToFile,X_OK); //Does this command exist ?
 			i++;
@@ -231,6 +160,44 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
 		wait(NULL);
 	}
 }
+
+
+
+
+
+void batchMode(char *fileName[])
+{
+	char line[1024];
+
+	FILE * fp = fopen(*(fileName+1), "r");
+	
+	if(fp == NULL)
+	{
+		write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));		
+	}
+
+	while(fgets(line, 1024, fp))
+	{
+		executeCommand(line);
+	} 
+	fclose(fp);
+}
+void interactiveMode(){
+
+
+	char str[MAX_SIZE];
+
+	do 
+	{		
+		printf ( "wish> ");
+		fgets(str, MAX_SIZE, stdin); //Gets input
+		executeCommand(str);
+	}
+	while(1);
+}
+
+
+
 
 builtin_command str_to_command( char *strcommand)
 {
