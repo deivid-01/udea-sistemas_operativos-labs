@@ -63,6 +63,6 @@ builtin_command str_to_command( char *);
 *	
 *	@param	char [] list    :	string
 */
-void deleteNewLine(char []);
+void deleteLastSymbol(char []);
 
 #endif

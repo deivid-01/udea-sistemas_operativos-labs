@@ -26,9 +26,6 @@ char *system_path_commands[] = {
 
 
 void batchMode(char *fileName[]){
-	printf("Executing batch mode...\n");
-	printf("Openning file %s\n",*(fileName+1));
-
 
 	char str[MAX_SIZE];
 	char args[30][15];
@@ -41,40 +38,29 @@ void batchMode(char *fileName[]){
 			printf("Error opening file\n");
 		}
 
-	do
+	while(fgets(line, 1024, fp))
+	{
+		
+		int numArgs=0;
+		
+		deleteLastSymbol(line);
+		saveArguments(30,15,args,line,&numArgs);
+		
+		builtin_command command = str_to_command( args[0] );
+		
+			if ( command != not_command) // BUIT-IN COMMANDS
 			{
-				
-				int numArgs=0;
-				printf( "wish> ");
-
-
-				fgets(line, 1024, fp);
-				
-
-			
-				
-				
-						deleteNewLine(line);
-						saveArguments(30,15,args,line,&numArgs);
-					
-						
-						builtin_command command = str_to_command( args[0] );
-						
-							if ( command != not_command) // BUIT-IN COMMANDS
-							{
-								executeBuiltInCommand(command,30,15,args,numArgs);
-							}
-							else //UNIX COMMANDS
-							{
-								executeUnixCommand(30,15,args,numArgs);	
-							}
-						
-			
-					
-				
-			} while(1);
+				executeBuiltInCommand(command,30,15,args,numArgs);
+			}
+			else //UNIX COMMANDS
+			{
+				executeUnixCommand(30,15,args,numArgs);	
+			}
+		
+	} 
 	fclose(fp);
 
+	
 
 }
 void interactiveMode(){
@@ -82,13 +68,14 @@ void interactiveMode(){
 	char str[MAX_SIZE];
 	char args[30][15];
 
+
 	do 
 			{
 				int numArgs = 0;
 				printf ( "wish> ");
 				fgets(str, MAX_SIZE, stdin); //Gets input
 
-				deleteNewLine(str); // Delete new line symbol '\n'
+				deleteLastSymbol(str); // Delete new line symbol '\n'
 				saveArguments(30,15,args,str,&numArgs); //Get arguments 
 
 				builtin_command command = str_to_command( args[0] );//Gets builtin command
@@ -228,7 +215,10 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
 			newProcessArgs[numArgs+1] = NULL;
 			//---------------------------------
 			//Execute command
-			execvp(newProcessArgs[0],newProcessArgs);
+			if ( execvp(newProcessArgs[0],newProcessArgs) )
+			{
+				write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));	//Display error
+			}
 		}
 		else //Command doestn't exist
 		{
@@ -256,15 +246,26 @@ builtin_command str_to_command( char *strcommand)
 	
 }
 
-void deleteNewLine(char str[])
+void deleteLastSymbol(char str[])
 {
 	char *p = str;
 
-	while( *p != '\n')
+	while(1)
 	{
 		p++;
+
+		if (*p == '\0')
+		{
+			break;
+		}
+		else if (*p == '\n' )
+		{
+			*p = '\0';
+			break;
+		}
+
 	}
-	*p = '\0'; //Reset last value
+
 }
 
 void saveArguments(int rows,int cols, char args[][cols],char str[],int *numArgs)
