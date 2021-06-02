@@ -125,7 +125,7 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
 		while (*(system_path_commands+i)!= NULL && returnedValue == -1) // Search for all PATHS
 		{
 			strcpy(pathToFile,*(system_path_commands+i)); //Set path route to pathToFile
-			printf("%s\n",pathToFile);
+			
 			strcat(pathToFile,args[0]); //Concatenate PATH + command
 			returnedValue= access(pathToFile,X_OK); //Does this command exist ?
 			i++;
@@ -162,6 +162,40 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
 }
 
 
+char*  deleteHeadTailWhiteSpaces(char *p)
+{
+	//Delete head white spaces}
+	int size = strlen(p);
+	
+	
+	while(*p == ' ')
+	{
+		p++;
+		size--; 
+	}
+	
+
+	//Move pointer to the end
+	for (int i = 0; i < size-1; i++)
+	{
+		p++;
+	}
+
+	//Delete tail white spaces
+	while(*p == ' ' || *p == '\n')
+	{
+		p--; 
+		size--;
+	}
+
+	//Move pointer to start
+	for (int i = size-1; i > 0 ; i--)
+	{		
+		p--;
+	}
+
+	return p;
+}
 
 
 
@@ -191,10 +225,23 @@ void interactiveMode(){
 	{		
 		printf ( "wish> ");
 		fgets(str, MAX_SIZE, stdin); //Gets input
-		executeCommand(str);
+
+		char *token;
+		char *rest = str;
+		while ( token = strtok_r(rest,"&",&rest) ) //Applies split()
+		{	
+			token = deleteHeadTailWhiteSpaces(token);
+			printf("%s\n",token);				
+
+			//Execute Parallel commands
+			//Forks (?)
+			executeCommand(token);
+		
+		}
 	}
 	while(1);
 }
+
 
 
 
