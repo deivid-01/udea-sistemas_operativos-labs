@@ -17,7 +17,7 @@ void setDefaultPath()
 	*(system_path_commands +1 ) = "/usr/bin/";
 	*(system_path_commands +2 ) = NULL;
 }
-void executeCommand(char line[])
+void executeCommand(char line[], char *out_filename)
 {
 	char args[30][15];
 	int numArgs = 0;
@@ -33,7 +33,7 @@ void executeCommand(char line[])
 	}
 	else //UNIX COMMANDS
 	{
-		executeUnixCommand(30,15,args,numArgs);	
+		executeUnixCommand(30,15,args,numArgs,out_filename);	
 	}
 }
 
@@ -108,7 +108,7 @@ void executeBuiltInCommand(builtin_command command,int rows,int cols,char  args[
 
 
 
-void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
+void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs,char*out_filename)
 {
 	int rc=fork(); // Create a new process
 
@@ -142,6 +142,13 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs)
 			}
 			//Last argument to NULL
 			newProcessArgs[numArgs+1] = NULL;
+
+			if (strlen(out_filename)>0) //Send result in outputfile
+			{
+				int out = creat(out_filename,0640); // Create a new file or rewrite existing one
+  				dup2(out,STDOUT_FILENO);
+  				close(out);
+			}
 			//---------------------------------
 			//Execute command
 			if ( execvp(newProcessArgs[0],newProcessArgs) )
@@ -198,12 +205,6 @@ char*  deleteHeadTailWhiteSpaces(char *p)
 }
 
 
-void redirectAndExecutecommand(char *command,char *output_file)
-{
-	//Configure excute command to send output in file
-}
-
-
 void batchMode(char *fileName[])
 {
 	char line[1024];
@@ -217,10 +218,11 @@ void batchMode(char *fileName[])
 
 	while(fgets(line, 1024, fp))
 	{
-		executeCommand(line);
+		executeCommand(line,""); //¿Redirection in batchmode?
 	} 
 	fclose(fp);
 }
+
 void interactiveMode(){
 
 
@@ -266,13 +268,13 @@ void interactiveMode(){
 					block_num = block_num +1;
 				}
 
-				redirectAndExecutecommand( cmd ,output_file );
+				executeCommand( cmd ,output_file );
 
 			}
 			else //Normal execution
 			{
 				//Forks (?)
-				executeCommand(token);
+				executeCommand(token,"");
 			}
 			
 		

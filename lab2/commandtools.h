@@ -28,7 +28,7 @@ void batchMode(char *[]);
 *	@param	char(*)[] args  :		command arguments
 *	@param	int numargs  :		numbers of command arguments 
 */
-void executeUnixCommand(int, int , char (*)[],int );
+void executeUnixCommand(int, int , char (*)[],int ,char *);
 /**
 *@brief Execute Builtin  Commands.
 *

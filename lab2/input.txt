@@ -6,4 +6,4 @@ cat hola.txt
 ls
 cd ../
 rm -r test2
-ls
+ls 
