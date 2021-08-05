@@ -198,6 +198,11 @@ char*  deleteHeadTailWhiteSpaces(char *p)
 }
 
 
+void redirectAndExecutecommand(char *command,char *output_file)
+{
+	//Configure excute command to send output in file
+}
+
 
 void batchMode(char *fileName[])
 {
@@ -226,18 +231,58 @@ void interactiveMode(){
 		printf ( "wish> ");
 		fgets(str, MAX_SIZE, stdin); //Gets input
 
+		  //Applies split('&') parallel commands
+		
 		char *token;
 		char *rest = str;
-		while ( token = strtok_r(rest,"&",&rest) ) //Applies split()
+		while ( token = strtok_r(rest,"&",&rest) ) 
 		{	
 			token = deleteHeadTailWhiteSpaces(token);
-			printf("%s\n",token);				
+						
+			if ( strchr(token,'>') != NULL ) // Redirection  //token.contains('>')
+			{
+				char *rest2 = token;
 
-			//Execute Parallel commands
-			//Forks (?)
-			executeCommand(token);
+				char *block;
+				char *cmd;
+				char *output_file;
+
+				int block_num = 0;
+
+				while ( block = strtok_r(rest2,">",&rest2)) // Applies split('>')
+				{
+					block = deleteHeadTailWhiteSpaces(block);
+
+					if ( block_num == 0) cmd = block;
+			
+					else if ( block_num == 1) output_file = block;
+		
+					else
+					{
+						write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));
+						break;
+					}
+
+					block_num = block_num +1;
+				}
+
+				redirectAndExecutecommand( cmd ,output_file );
+
+			}
+			else //Normal execution
+			{
+				//Forks (?)
+				executeCommand(token);
+			}
+			
 		
 		}
+	
+
+
+		
+
+		
 	}
 	while(1);
 }

@@ -9,11 +9,11 @@ int main (int argc, char *argv[])
 
 	if( argc-1 == 0) //Interactive mode
 	{
-		interactiveMode();	
+		interactiveMode();	//Waiting for linux commands
 	}
 	else if ( (argc-1) == 1 ) // Batch mode
 	{
-		batchMode(argv);
+		batchMode(argv); //Read file with linux commands
 	}
 	else //Error
 	{
