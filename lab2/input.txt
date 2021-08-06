@@ -1,9 +1,0 @@
-ls
-mkdir test2
-cd test2
-nano hola.txt
-cat hola.txt
-ls
-cd ../
-rm -r test2
-ls 
