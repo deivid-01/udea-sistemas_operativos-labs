@@ -14,8 +14,9 @@ char *system_path_commands[50];
 void setDefaultPath()
 {
 	*system_path_commands = "/bin/";
-	*(system_path_commands +1 ) = "/usr/bin/";
-	*(system_path_commands +2 ) = NULL;
+	*(system_path_commands + 1 ) = "/usr/bin/";
+	*(system_path_commands + 2 ) = "./";
+	*(system_path_commands + 3 ) = NULL;
 }
 void executeCommand(char line[], char *out_filename)
 {
@@ -23,16 +24,23 @@ void executeCommand(char line[], char *out_filename)
 	int numArgs = 0;
 	
 	deleteLastSymbol(line); // Delete new line symbol '\n'
+	
 	saveArguments(30,15,args,line,&numArgs); //Get arguments 
 
+
+
+		
 	builtin_command command = str_to_command( args[0] );//Gets builtin command
 
 	if ( command != not_command) // BUIT-IN COMMANDS
 	{
+		
+
 		executeBuiltInCommand(command,30,15,args,numArgs);
 	}
 	else //UNIX COMMANDS
 	{
+		
 		executeUnixCommand(30,15,args,numArgs,out_filename);	
 	}
 }
@@ -61,6 +69,9 @@ void executeCD(int rows, int cols, char args[][cols],int numArgs)
 }
 
 
+
+
+
 /*
 *@brief Execute PATH - built_in command
 *
@@ -77,14 +88,41 @@ void executePATH(int rows, int cols, char args[][cols],int numArgs)
 	}
 	else
 	{
-		int i = 0;
+		int i = 1;
+		int size_path = 0; 
 
-		while (i<numArgs) // Set new path
+		while (*(system_path_commands+size_path)!= NULL)
 		{
-			*(system_path_commands+i) = args[i+1];
-			i++;
+			++size_path;
 		}
-		*(system_path_commands+i) = NULL;
+
+	
+		while (i<numArgs+1) // Set new path
+		{
+			//write(STDERR_FILENO, args[i+1], strlen(args[i+1]));
+
+			if (!strchr(args[i],'/'))
+			{	
+
+				int size_path2 =strlen(args[i]);
+
+    			char str[size_path2+3];
+				snprintf(str,size_path2+6,"./%s/",args[i]);
+				//write(STDERR_FILENO, str, strlen(str));
+				//printf("%s",str);
+
+			
+				*(system_path_commands+size_path) = str;
+			}
+			else
+			{
+				*(system_path_commands+size_path) = args[i+1];
+			}
+
+			i++;
+			++size_path;
+		}
+		*(system_path_commands+size_path) = NULL;
 		
 	}
                                 
@@ -101,6 +139,14 @@ void executeBuiltInCommand(builtin_command command,int rows,int cols,char  args[
 			executePATH(30,15,args,numArgs);
 			break;
 		case exit_ : 
+			if (numArgs>=1) 
+				write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));
+			else
+			{	
+				exit(0);
+			}
+			break;
+		default:
 			exit(0);
 			break;
 	}
@@ -119,6 +165,8 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs,char*o
 	}
 	else if ( rc == 0) // It's a child
 	{
+		
+		
 		char pathToFile[ MAX_SIZE];
 		int i = 0;
 		int returnedValue = -1;
@@ -127,22 +175,37 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs,char*o
 			strcpy(pathToFile,*(system_path_commands+i)); //Set path route to pathToFile
 			
 			strcat(pathToFile,args[0]); //Concatenate PATH + command
+			
 			returnedValue= access(pathToFile,X_OK); //Does this command exist ?
+			
 			i++;
 		}
+
+		
 
 		if (returnedValue!= -1) // If command exist 
 		{
 			//Set arguments of the new process---
 			char *newProcessArgs[numArgs+2];
-			newProcessArgs[0] = strdup(pathToFile);
-			for (int i = 1; i < numArgs+1; i++)
+
+		
+			for (int i = 0; i < numArgs+1; i++)
 			{	
 				newProcessArgs[i] = args[i];
 			}
+
+
+
+			if (strstr(newProcessArgs[0],".sh"))
+			{
+				newProcessArgs[0] = pathToFile;
+			
+
+			}
+
 			//Last argument to NULL
 			newProcessArgs[numArgs+1] = NULL;
-
+			
 			if (strlen(out_filename)>0) //Send result in outputfile
 			{
 				int out = creat(out_filename,0640); // Create a new file or rewrite existing one
@@ -154,18 +217,23 @@ void executeUnixCommand(int rows, int cols, char args[][cols],int numArgs,char*o
 			if ( execvp(newProcessArgs[0],newProcessArgs) )
 			{
 				write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));	//Display error
+				exit(0);
 			}
+			
 		}
 		else //Command doestn't exist
 		{
 			write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));	//Display error
+			exit(0);
 		}
 		
 	}
-	else //Father waits until his child ends
+	else
 	{
 		wait(NULL);
+		
 	}
+	
 }
 
 
@@ -218,9 +286,73 @@ void batchMode(char *fileName[])
 
 	while(fgets(line, 1024, fp))
 	{
-		executeCommand(line,""); //¿Redirection in batchmode?
+		char *token;
+		token = deleteHeadTailWhiteSpaces(line);
+						
+			if ( strchr(token,'>') != NULL ) // Redirection  //token.contains('>')
+			{
+				char *rest2 = token;
+			
+				char *block;
+				char *cmd;
+				char *output_file;
+
+				int block_num = 0;
+
+				while ( block = strtok_r(rest2,">",&rest2)) // Applies split('>')
+				{
+					block = deleteHeadTailWhiteSpaces(block);
+
+					
+
+					if ( block_num == 0) cmd = block;
+			
+					else if ( block_num == 1)
+					{
+						if( strstr(block," "))
+						{
+							write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));
+							return;
+						}
+						else
+						{
+					 		output_file = block;
+						}
+					}
+						
+		
+					else
+					{
+						write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));
+						break;
+					}
+
+					block_num = block_num +1;
+				}
+				int size_output_filename = strlen(output_file);
+
+				if ( size_output_filename > 0)
+				{
+					executeCommand( cmd ,output_file );
+				}
+				else
+				{
+					write(STDERR_FILENO, ERROR_MESSAGE, strlen(ERROR_MESSAGE));
+
+				}
+
+
+			}
+			else //Normal execution
+			{
+				
+				executeCommand(token,"");
+			}	
+
+		
 	} 
 	fclose(fp);
+	exit(0);
 }
 
 void interactiveMode(){
@@ -297,6 +429,8 @@ builtin_command str_to_command( char *strcommand)
 {
 	for (int i = 0; i < 3; i++)
 	{
+			
+
 		if ( ! strcmp(commands[i].string_value, strcommand)) //If built in command exists...
 		{
 			return commands[i].command;
@@ -313,7 +447,7 @@ void deleteLastSymbol(char str[])
 
 	while(1)
 	{
-		p++;
+		
 
 		if (*p == '\0')
 		{
@@ -325,6 +459,7 @@ void deleteLastSymbol(char str[])
 			break;
 		}
 
+		p++;
 	}
 
 }

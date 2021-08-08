@@ -5,6 +5,7 @@
 
 int main (int argc, char *argv[])
 {
+	
 	setDefaultPath();
 
 	if( argc-1 == 0) //Interactive mode
